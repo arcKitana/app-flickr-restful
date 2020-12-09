@@ -18,24 +18,26 @@
         <table class="table">
             <thead class="thead-dark">
 	            <tr>
-	 				<th scope="col"></th>
-	                <th scope="col"></th>
-	                <th scope="col"></th>
 	                <th scope="col">
-	                	<form th:action="@{__${T(com.app.flickr.restful.util.AttributeNames).SEARCH}__}"
+	                	<form th:action="@{/__${T(com.app.flickr.restful.util.AttributeNames).SEARCH}__}"
 	                	      action="search"
 	                	      method="post">
 	                		<label>Search</label>
-	                		<input id="search" type="text" name="search"/>
+	                		<input type="text" th:name="title"/>
 	                		<input type="submit" value="Go"/>
 	                	</form>
 					</th>
+	 				<th scope="col" ></th>
+	                <th scope="col"></th>
+	                <th scope="col"></th>					
 	            </tr>
             </thead>
           	<tbody>
-							
-				<span th:each="page: ${flickrRestfulObjectPage.content}">
-					<span th:each="items, iterator : ${page.items}">	
+
+
+
+				<div th:if="${not #lists.isEmpty(flickrRestfulObjectItems)}">
+					<span th:each="items, iterator : ${flickrRestfulObjectItems}">	
 							
 						 <div th:if="${(iterator.index+1) % 4 == 0}">
 						 	<td><img th:src="@{${items.media.m}}" style="width:284px;height:228px"/></td></tr>								 	
@@ -45,24 +47,35 @@
 						 </div>	
 						 					
 					</span>
-				</span>										
+				</div>
+				<div th:if="${#lists.isEmpty(flickrRestfulObjectItems)}">
+					<div align="center">
+						<td th:text="${messageError}" align="center" colspan="4" style="border-top-style: outset;"/>
+					</div>				
+				</div>
 
            	</tbody>
         </table>
         <br>
         
-		<div th:if="${flickrRestfulObjectPage.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
-		    <a th:href="@{/photos(size=${flickrRestfulObjectPage.size}, page=${pageNumber})}"
-		       th:text=${pageNumber}
-		       th:class="${pageNumber==flickrRestfulObjectPage.number + 1} ? active"></a>
-		</div>        
+		
+      	<div th:if="${flickrRestfulObjectPage.totalPages > 0}" >
+			<td th:text="${page}" style="border-top-style: outset;"/>
+
+			<th:block th:each="pageNumber : ${pageNumbers}">
+			     <a th:href="@{/photos(size=${flickrRestfulObjectPage.size}, page=${pageNumber})}"
+					th:text=${pageNumber}
+					th:class="${pageNumber==flickrRestfulObjectPage.number + 1} ? active"></a>
+			</th:block>
+		</div> 
+		<br><br>
 
         <form action="flickrPhotos" method="post">
             <button type="submit" class="btn btn-secondary btn-lg">Get More Flickr</button>
         </form>
 
         <br><br>
-        <footer>
+        <footer>         
             <p><b>Data Powered By Flickr API</b></p>
         </footer>
 

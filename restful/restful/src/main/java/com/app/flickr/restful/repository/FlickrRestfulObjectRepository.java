@@ -8,5 +8,6 @@ import com.app.flickr.restful.model.FlickrRestfulObject;
 @Repository
 public interface FlickrRestfulObjectRepository extends MongoRepository<FlickrRestfulObject, String> {
 
+
 	
 }
