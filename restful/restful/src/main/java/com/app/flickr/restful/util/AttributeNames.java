@@ -21,6 +21,8 @@ public class AttributeNames {
 	
 	// Constants button
 	public static final String PHOTOS = "photos";
-	public static final String SEARCH  = "search";
+	public static final String SEARCH = "search";
+	public static final String FLICKR_PHOTOS = "flickrPhotos";
     public static final String REDIRECT_PHOTOS = "redirect:/" + PHOTOS;
+    public static final String REDIRECT_FLICKR_PHOTOS = "redirect:/" + FLICKR_PHOTOS;
 }

@@ -32,31 +32,34 @@
 					</th>
 	            </tr>
             </thead>
-            <tbody>
-	            <tr>	                
-	                <td><img th:src="@{${objectItemsMedia1}}" style="width:284px;height:228px"/></td>
-	                <td><img th:src="@{${objectItemsMedia2}}" style="width:284px;height:228px"/></td>
-	                <td><img th:src="@{${objectItemsMedia3}}" style="width:284px;height:228px"/></td>
-	                <td><img th:src="@{${objectItemsMedia4}}" style="width:284px;height:228px"/></td>
-	            </tr>
-	            
-	            <tr>
-		            <td><img th:src="@{${objectItemsMedia5}}" style="width:284px;height:228px"/></td>
-	               	<td><img th:src="@{${objectItemsMedia6}}" style="width:284px;height:228px"/></td>
-	                <td><img th:src="@{${objectItemsMedia7}}" style="width:284px;height:228px"/></td>
-	                <td><img th:src="@{${objectItemsMedia8}}" style="width:284px;height:228px"/></td>
-	                
-	            </tr>
+          	<tbody>
+							
+				<span th:each="page: ${flickrRestfulObjectPage.content}">
+					<span th:each="items, iterator : ${page.items}">	
+							
+						 <div th:if="${(iterator.index+1) % 4 == 0}">
+						 	<td><img th:src="@{${items.media.m}}" style="width:284px;height:228px"/></td></tr>								 	
+						 </div>
+						 <div th:if="${(iterator.index+1) % 4 != 0}">
+						 	<td><img th:src="@{${items.media.m}}" style="width:284px;height:228px"/></td>
+						 </div>	
+						 					
+					</span>
+				</span>										
 
-            </tbody>
+           	</tbody>
         </table>
         <br>
+        
+		<div th:if="${flickrRestfulObjectPage.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
+		    <a th:href="@{/photos(size=${flickrRestfulObjectPage.size}, page=${pageNumber})}"
+		       th:text=${pageNumber}
+		       th:class="${pageNumber==flickrRestfulObjectPage.number + 1} ? active"></a>
+		</div>        
 
-        <form action="photos" method="post">
-            <button type="submit" class="btn btn-secondary btn-lg">Refresh</button>
+        <form action="flickrPhotos" method="post">
+            <button type="submit" class="btn btn-secondary btn-lg">Get More Flickr</button>
         </form>
-
-
 
         <br><br>
         <footer>

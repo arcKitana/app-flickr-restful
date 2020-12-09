@@ -6,14 +6,24 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.app.flickr.restful.model.FlickrRestfulObject;
 import com.app.flickr.restful.repository.FlickrRestfulObjectRepository;
@@ -32,8 +42,8 @@ public class FlickrRestfulController {
 	@Autowired
 	private FlickrRestfulObjectRepository flickrRestfulObjectRepository;
 	
-	@GetMapping(AttributeNames.PHOTOS)
-	public String displayPhotos(Model model) {
+	@GetMapping("/flickrPhotos")
+	public String getPhotos(Model model) {
 	
 		try {
 			
@@ -70,33 +80,7 @@ public class FlickrRestfulController {
 			ObjectMapper mapper = new ObjectMapper();
 			FlickrRestfulObject flickrRestfulObject = mapper.readValue(concatString, FlickrRestfulObject.class);
 			
-			
-			
-			// Mapping into attributes
-			model.addAttribute(AttributeNames.OBJECT_TITLE, flickrRestfulObject.getTitle());
-			model.addAttribute(AttributeNames.OBJECT_LINK, flickrRestfulObject.getLink());   
-			model.addAttribute(AttributeNames.OBJECT_DESCRIPTION, flickrRestfulObject.getDescription());
-			model.addAttribute(AttributeNames.OBJECT_MODIFIED, flickrRestfulObject.getModified());
-			model.addAttribute(AttributeNames.OBJECT_GENERATOR, flickrRestfulObject.getGenerator());
-			
-			log.info(">>>>>   Object Title {} ", flickrRestfulObject);						
-						
-			for(int i=0; i<flickrRestfulObject.getItems().length; i++) {
-				model.addAttribute(AttributeNames.OBJECT_ITEMS_TITLE + (i+1), flickrRestfulObject.getItems()[i].getTitle());
-				model.addAttribute(AttributeNames.OBJECT_ITEMS_LINK + (i+1), flickrRestfulObject.getItems()[i].getLink());
-				model.addAttribute(AttributeNames.OBJECT_ITEMS_MEDIA + (i+1), flickrRestfulObject.getItems()[i].getMedia().getM());
-				model.addAttribute(AttributeNames.OBJECT_ITEMS_DATE_TAKEN + (i+1), flickrRestfulObject.getItems()[i].getDateTaken());
-				model.addAttribute(AttributeNames.OBJECT_ITEMS_DESCRIPTION + (i+1), flickrRestfulObject.getItems()[i].getDescription());
-				model.addAttribute(AttributeNames.OBJECT_ITEMS_PUBLISHED + (i+1), flickrRestfulObject.getItems()[i].getPublished());
-				model.addAttribute(AttributeNames.OBJECT_ITEMS_AUTHOR + (i+1), flickrRestfulObject.getItems()[i].getAuthor());
-				model.addAttribute(AttributeNames.OBJECT_ITEMS_AUTHOR_ID + (i+1), flickrRestfulObject.getItems()[i].getAuthor_Id());  
-				model.addAttribute(AttributeNames.OBJECT_ITEMS_TAGS + (i+1), flickrRestfulObject.getItems()[i].getTags());	
 
-				log.info(">>>>>   ObjectItems  {} ", flickrRestfulObject.getItems()[i]);				
-			}
-			
-
-			
 			flickrRestfulObject.setDate(new java.util.Date());
 			log.info(">>>>>   set Date : {}", flickrRestfulObject.getDate());
 	
@@ -104,7 +88,7 @@ public class FlickrRestfulController {
 			flickrRestfulObjectRepository.save(flickrRestfulObject);
 			
 			log.info(">>>>>   Insert Data successfully");
-
+			
 			conn.disconnect();
 
         }
@@ -117,15 +101,37 @@ public class FlickrRestfulController {
         catch (Exception exc){
             exc.printStackTrace();
         }
-		
-		
-		return AttributeNames.PHOTOS;
+
+		return AttributeNames.REDIRECT_PHOTOS;
 	}
-	
-	
-    @PostMapping(AttributeNames.PHOTOS)
-    public String processingDisplay(){
+
+    @PostMapping(AttributeNames.FLICKR_PHOTOS)
+    public String redirect(){
         log.info("============================================== Refresh Data ==============================================");
-        return AttributeNames.REDIRECT_PHOTOS;
+        return AttributeNames.REDIRECT_FLICKR_PHOTOS;
+    }	
+	
+	@GetMapping("/photos")
+    public String photos(Model model, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size){
+    	
+		int currentPage = page.orElse(1);
+		int pageSize = size.orElse(1);
+		
+    	Pageable firstPage = PageRequest.of((currentPage-1), pageSize, Sort.by(Order.asc("date")));
+		
+    	Page<FlickrRestfulObject> flickrRestfulObjectPage =  flickrRestfulObjectRepository.findAll(firstPage);
+
+    	model.addAttribute("flickrRestfulObjectPage", flickrRestfulObjectPage);
+    	
+        int totalPages = flickrRestfulObjectPage.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                .boxed()
+                .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+    	
+		return AttributeNames.PHOTOS;
     }
+
 }
