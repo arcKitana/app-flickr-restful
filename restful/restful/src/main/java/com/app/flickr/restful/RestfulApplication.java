@@ -12,11 +12,4 @@ public class RestfulApplication{
 	public static void main(String[] args) {
 		SpringApplication.run(RestfulApplication.class, args);
 	}
-
-//	@Override
-//	public void run(String... args) throws Exception {
-//		System.out.println("============================= connection success >>>>>>>>>>>>>>>>>>>>>>>>>>");
-//		
-//	}
-
 }
