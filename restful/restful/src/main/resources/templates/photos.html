@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+        <!-- Required meta tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    
+<title>Flickr REST Application</title>
+</head>
+<body>
+	<div align="center">
+        <br>
+        <h1>Flick Rest Application</h1>
+        <br>
+        <table class="table">
+            <thead class="thead-dark">
+	            <tr>
+	 				<th scope="col"></th>
+	                <th scope="col"></th>
+	                <th scope="col"></th>
+	                <th scope="col">
+	                	<form th:action="@{__${T(com.app.flickr.restful.util.AttributeNames).SEARCH}__}"
+	                	      action="search"
+	                	      method="post">
+	                		<label>Search</label>
+	                		<input id="search" type="text" name="search"/>
+	                		<input type="submit" value="Go"/>
+	                	</form>
+					</th>
+	            </tr>
+            </thead>
+            <tbody>
+	            <tr>
+	                <!-- <td th:text="${__${T(com.app.flickr.restful.util.AttributeNames).OBJECT_TITLE}__}"></td>
+	                <td><img th:src="@{https://live.staticflickr.com/65535/50691255318_f2ea02c896_m.jpg}" style="width:304px;height:228px"/></td>
+	                <td th:text="${__${T(com.app.flickr.restful.util.AttributeNames).OBJECT_DESCRIPTION}__}"></td>
+	                <td th:text="${__${T(com.app.flickr.restful.util.AttributeNames).OBJECT_MODIFIED}__}"></td>
+	                <td th:text="${__${T(com.app.flickr.restful.util.AttributeNames).OBJECT_GENERATOR}__}"></td> 
+	                		            <td><img th:src="@{https://live.staticflickr.com/65535/50692148372_9182d4d8de_m.jpg}" style="width:304px;height:228px"/></td>
+	                -->
+	                <!-- <td><img th:src="@{https://live.staticflickr.com/65535/50691257303_ef7d72a414_m.jpg}" style="width:284px;height:228px"/></td> -->
+	                
+	                
+	                <td><img th:src="@{${objectItemsMedia1}}" style="width:284px;height:228px"/></td>
+	                <td><img th:src="@{${objectItemsMedia2}}" style="width:284px;height:228px"/></td>
+	                <td><img th:src="@{${objectItemsMedia3}}" style="width:284px;height:228px"/></td>
+	                <td><img th:src="@{${objectItemsMedia4}}" style="width:284px;height:228px"/></td>
+	            </tr>
+	            
+	            <tr>
+		            <td><img th:src="@{${objectItemsMedia5}}" style="width:284px;height:228px"/></td>
+	               	<td><img th:src="@{${objectItemsMedia6}}" style="width:284px;height:228px"/></td>
+	                <td><img th:src="@{${objectItemsMedia7}}" style="width:284px;height:228px"/></td>
+	                <td><img th:src="@{${objectItemsMedia8}}" style="width:284px;height:228px"/></td>
+	                
+	            </tr>
+
+            </tbody>
+        </table>
+        <br>
+
+        <form action="photos" method="post">
+            <button type="submit" class="btn btn-secondary btn-lg">Refresh</button>
+        </form>
+
+
+
+        <br><br>
+        <footer>
+            <p><b>Data Powered By Flickr API</b></p>
+        </footer>
+
+    </div>	
+</body>
+</html>
